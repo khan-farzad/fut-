@@ -13,5 +13,16 @@
     display: flex;
     flex-direction: column-reverse; /* This makes the content display from bottom to top */
     overflow-y: auto;
-    padding: 10px;
+}
+
+.shdw{
+    box-shadow:0 6px 0 rgb(0,0,0,.2),0 6px 0 rgb(55,70,79)
+}
+
+.shdw:hover{
+    box-shadow:0 2px 0 rgb(0,0,0,.2),0 2px 0 rgb(55,70,79)
+}
+
+.progress-bar{
+    box-shadow: rgb(0, 0, 0) 1px 1px 6px 0px inset;
 }
