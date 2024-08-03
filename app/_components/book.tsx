@@ -1,24 +1,46 @@
 import Image from "next/image";
-import React from "react";
+import book2 from "@/public/book2.png";
+import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
-import book2 from '@/public/book2.png'
 
 const Book = ({
-  progress,
-  title,
   desc,
+  title,
+  index,
 }: {
-  progress: number;
-  title: string;
   desc: string;
+  title: string;
+  index: number;
 }) => {
+  const [progress, setProgress] = useState(0);
+  const games = ["noob-to-pro", "cap", "blind-75"];
+  const totalques = [272, 60, 72];
+
+  const fetchProgress = () => {
+    try {
+      const value = localStorage.getItem(games[index]);
+      if (!value) return;
+      setProgress(
+        Math.floor((JSON.parse(value).length / totalques[index]) * 100)
+      );
+    } catch (error) {
+      console.log("error in fetching progress:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProgress();
+  }, []);
   return (
     <>
       <div className="size-full pl-14 pr-4 py-4 z-10 tracking-tighter flex flex-col gap-2 text-white">
         <div className="text-xs flex gap-2 items-center">
           <p>{progress}%</p>
           <div className=" bg-[#4d5178] w-full h-2 rounded-xl progress-bar">
-            <div style={{width:progress+'%'}} className={`bg-white/40 h-full rounded-xl`}></div>
+            <div
+              style={{ width: progress + "%" }}
+              className={`bg-white/40 h-full rounded-xl`}
+            ></div>
           </div>
         </div>
         <p className="font-semibold">{title}</p>

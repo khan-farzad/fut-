@@ -1,21 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
 
 const HEADERS = {
-  "accept": "*/*",
-    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    "content-type": "application/json",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Google Chrome\";v=\"126\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"macOS\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "x-csrftoken": "Qd6JZGKNdnk6vMYQJBW9mq26UzWVBN0p5yyo670xqyNDCMIxJQcJ7tNGkb0Ese4R",
-    "cookie": process.env.COOKIE,
-    "Referer": "https://leetcode.com/problems/",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
+  "x-csrftoken": process.env.TOKEN,
+  Referer: process.env.API + "/problems/",
+  cookie: process.env.COOKIE + "csrftoken=" + process.env.TOKEN,
 };
 
 export async function POST(request: NextRequest) {
@@ -24,13 +13,13 @@ export async function POST(request: NextRequest) {
       await request.json();
     const response = await axios({
       method: "post",
-      url: `https://leetcode.com/problems/${titleSlug}/interpret_solution/`,
+      url: `${process.env.API}/problems/${titleSlug}/interpret_solution/`,
       headers: HEADERS,
       data: {
         lang: lang,
-        question_id: question_id,
-        typed_code: typed_code,
         data_input: data_input,
+        typed_code: typed_code,
+        question_id: question_id,
       },
     });
     const interpret_id = response.data.interpret_id;
@@ -38,7 +27,7 @@ export async function POST(request: NextRequest) {
     while (true) {
       const result = await axios({
         method: "get",
-        url: `https://leetcode.com/submissions/detail/${interpret_id}/check/`,
+        url: `${process.env.API}/submissions/detail/${interpret_id}/check/`,
         headers: HEADERS,
       });
       if (result.data.state === "SUCCESS") {
