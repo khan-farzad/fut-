@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Book from "./_components/book";
+import logo2 from '@/public/logo2.png'
 
 export default function Home() {
   const router = useRouter();
@@ -9,7 +10,7 @@ export default function Home() {
     <div className="h-screen flex items-center flex-col justify-start gap-14 py-20 bg-zinc-900 relative">
       <div className="dark:block absolute z-[100] top-1/3 -left-[160px] size-72 bg-[#D41F30] rounded-full opacity-40 blur-[120px] dark:opacity-50"></div>
       <h1 className="flex items-center text-4xl text-[#D41F30]">
-        <Image alt="logo" src={"/logo2.png"} height={199} width={199} />-
+        <Image alt="logo" src={logo2} placeholder="blur" className="w-64" />-
       </h1>
       <p className="text-2xl text-white tracking-tighter">
         KickStart your coding journey in the right direction!

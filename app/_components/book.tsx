@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
+import book2 from '@/public/book2.png'
 
 const Book = ({
   progress,
@@ -28,10 +29,9 @@ const Book = ({
       </div>
       <Image
         alt="book"
-        src={"/book2.png"}
-        height={199}
-        width={199}
+        src={book2}
         className="size-full absolute top-0 -z-10"
+        placeholder="blur"
       />
     </>
   );
