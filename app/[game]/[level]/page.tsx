@@ -4,7 +4,7 @@ import { ProblemType } from "@/lib/util";
 import Loading from "./_components/Loading";
 import { useParams } from "next/navigation";
 import LeftPart from "./_components/LeftPart";
-import RighPart from "./_components/RighPart";
+import RightPart from "./_components/RightPart";
 import React, { useEffect, useState } from "react";
 import VerticalDivider from "./_components/VerticalDivider";
 
@@ -38,7 +38,7 @@ export default function Home() {
         questionWidth={questionWidth}
         setQuestionWidth={setQuestionWidth}
       />
-      <RighPart problemDetail={problemDetail} questionWidth={questionWidth} />
+      <RightPart problemDetail={problemDetail} questionWidth={questionWidth} />
     </div>
   );
 }

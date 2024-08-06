@@ -8,7 +8,7 @@ import { IoDiamond } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
 import { MetaDataType, ProblemType } from "@/lib/util";
 
-const RighPart = ({
+const RightPart = ({
   questionWidth,
   problemDetail,
 }: {
@@ -40,49 +40,113 @@ const RighPart = ({
         return;
       }
       let prevProgressObj = JSON.parse(prevProgress);
-      !prevProgressObj.includes(ques.level) &&
+      if (!prevProgressObj.includes(ques.level)) {
         (prevProgressObj.push(ques.level),
-        localStorage.setItem(ques.game, JSON.stringify(prevProgressObj)));
+        localStorage.setItem(ques.game, JSON.stringify(prevProgressObj))),
+          setShowPointsModal(true);
+        setTimeout(() => {
+          setShowPointsModal(false);
+        }, 5000);
+      }
     } catch (error) {}
   };
 
-  const handleRun = async () => {
+  function extractOutputs(str: string) {
+    const regex =
+      /<strong>Output:<\/strong>\s*(\[\[.*?\]\]|\[.*?\]|".*?"|'.*?'|-?\d+|\w+|<span class="example-io">.*?<\/span>)/g;
+    let matches;
+    const outputs = [];
+    while ((matches = regex.exec(str)) !== null) {
+      let outputStr = matches[1].trim();
+      outputStr = outputStr.replace(/&quot;/g, '"');
+      try {
+        if (
+          outputStr.startsWith('<span class="example-io">') &&
+          outputStr.endsWith("</span>")
+        ) {
+          outputStr = outputStr
+            .replace('<span class="example-io">', "")
+            .replace("</span>", "")
+            .trim();
+        }
+
+        if (outputStr.startsWith("[") && outputStr.endsWith("]")) {
+          outputs.push(JSON.parse(outputStr));
+        } else if (
+          outputStr === "true" ||
+          outputStr === "false" ||
+          !isNaN(parseInt(outputStr))
+        ) {
+          outputs.push(
+            outputStr === "true"
+              ? "True"
+              : outputStr === "false"
+              ? "False"
+              : parseFloat(outputStr)
+          );
+        } else {
+          outputs.push(outputStr);
+        }
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    }
+
+    return outputs;
+  }
+
+  let expectedTestcases = extractOutputs(
+    problemDetail?.content!.replaceAll("&quot;", '"')!
+  );
+  const handleRun2 = async () => {
     setIsCompiling(true);
     try {
       const response = await axios({
         method: "post",
-        url: "/api/run",
+        url: "/api/judge",
         data: {
-          typed_code: ans,
-          question_id: qId,
-          lang: selectedLang,
-          titleSlug: ques.level,
-          data_input: problemDetail?.exampleTestcases,
+          toSend: await getToSend(),
         },
       });
-      setOutput(response.data.data.code_answer);
-      setError(response.data.data.compile_error);
-      setExpected(response.data.data.expected_code_answer);
-      if (response.data.data.runtime_error)
-        setError(response.data.data.runtime_error);
-      if (
-        response.data.data.compare_result &&
-        response.data.data.compare_result.indexOf("0") !== -1
-      )
-        setActiveTestCaseIndex(response.data.data.compare_result.indexOf("0"));
-      if (response.data.data.correct_answer === true) {
-        addProgress();
-        setShowPointsModal(true);
-        setTimeout(() => {
-          setShowPointsModal(false);
-        }, 5000);
-        window.dispatchEvent(new Event("correctSolution"));
+      setError(response.data.data.stderr);
+      if (response.data.data.stdout) {
+        let tmpOutput = response.data.data.stdout
+          .replaceAll(", ", ",")
+          .split("\n");
+        tmpOutput.pop();
+        setOutput(tmpOutput);
+        setExpected(expectedTestcases);
+        if (JSON.stringify(expectedTestcases) == JSON.stringify(tmpOutput)) {
+          addProgress();
+          window.dispatchEvent(new Event("correctSolution"));
+        }
       }
     } catch (error) {
       console.log(error);
     } finally {
       setIsCompiling(false);
     }
+  };
+
+  const getToSend = async () => {
+    let toSend = ans;
+    let exampleTestcasesCounter = 0;
+    let expectedTestcasesCounter = 0;
+    while (exampleTestcasesCounter < exampleTestcases?.length!) {
+      expectedTestcases[expectedTestcasesCounter] =
+        typeof expectedTestcases[expectedTestcasesCounter] !== "string"
+          ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
+          : expectedTestcases[expectedTestcasesCounter];
+      let toFill = "";
+      for (let i = 0; i < metaData.params.length; i++) {
+        toFill += exampleTestcases![exampleTestcasesCounter++];
+        if (i !== metaData.params!.length - 1) toFill += ",";
+      }
+      toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
+      expectedTestcasesCounter++;
+    }
+    const x64 = Buffer.from(toSend!).toString("base64");
+    return x64;
   };
 
   const handleHeightChange = (
@@ -125,12 +189,12 @@ const RighPart = ({
         </div>
       )}
       <div
-        style={{ width: `${100 - questionWidth}%` }}
+        style={{ width: ` ${100 - questionWidth}%` }}
         className="flex flex-col bg-[#1E1E1E] text-primary relative grow"
       >
         <EditorHeader
           setAns={setAns}
-          handleRun={handleRun}
+          handleRun={handleRun2}
           isCompiling={isCompiling}
           setSelectedLang={setSelectedLang}
           languages={problemDetail?.codeSnippets}
@@ -138,7 +202,7 @@ const RighPart = ({
         <Editor
           options={{
             fontSize: 16,
-            wordBasedSuggestionsOnlySameLanguage:true
+            wordBasedSuggestionsOnlySameLanguage: true,
           }}
           value={ans}
           width="100%"
@@ -166,4 +230,4 @@ const RighPart = ({
   );
 };
 
-export default RighPart;
+export default RightPart;
