@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { TopicType } from "@/lib/util";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import TotalPoints from "./_components/TotalPoints";
 import { A2ZTopics, Blind75Topics, CAPTopics } from "@/dataFinal";
@@ -118,13 +118,13 @@ const Page = ({ params }: { params: { game: string } }) => {
                         : "bg-neutral-300"
                     }`}
                   >
-                    <Image
+                    {progress.includes(q.lcSlug) ? <FaCheck className="size-6 text-primary"/> : <Image
                       alt="start"
                       src={"/star.svg"}
                       width={49}
                       height={99}
                       className="size-6"
-                    />
+                    />}
                   </div>
                   <p>{q.title}</p>
                 </div>
