@@ -24,7 +24,7 @@ const Video = ({ game, level }: { game: string; level: string }) => {
       <iframe
         loading="lazy"
         className="size-full"
-        src={`http://www.youtube.com/embed/${findYtSlugByLcSlug(game, level)}`}
+        src={`https://www.youtube.com/embed/${findYtSlugByLcSlug(game, level)}`}
       ></iframe>
     </div>
   );
