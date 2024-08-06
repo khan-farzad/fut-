@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Markdown from "markdown-to-jsx";
 import { ProblemType } from "@/lib/util";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
+import Hints from "./_leftPartComponents/Hints";
+import Video from "./_leftPartComponents/Video";
+import Problem from "./_leftPartComponents/Problem";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import { useParams, useRouter } from "next/navigation";
 
 const LeftPart = ({
   problemDetail,
@@ -13,10 +15,12 @@ const LeftPart = ({
   problemDetail: ProblemType | undefined;
 }) => {
   const router = useRouter();
-  const ques: { game: string; level: string } = useParams();
-  const difficulty = problemDetail?.difficulty;
+  const [tab, setTab] = useState("Problem");
   const questionData = problemDetail?.content;
+  const difficulty = problemDetail?.difficulty;
   const [isSolved, setIsSolved] = useState(false);
+  const [activeTabIdx, setActiveTabIdx] = useState(0);
+  const ques: { game: string; level: string } = useParams();
 
   const isAlreadySolved = () => {
     try {
@@ -36,18 +40,34 @@ const LeftPart = ({
     });
   }, []);
 
+  let tabs = ["Problem", "Video"];
+
+  if (problemDetail?.hints && problemDetail.hints.length > 0)
+    tabs.splice(1, 0, "Hints");
+
   return (
     <div
-      className="p-5 bg-background text-primary/90 overflow-auto"
+      className=" bg-background text-primary/90 overflow-auto"
       style={{ width: `${questionWidth}%` }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex gap-4 items-center mb-5">
+      <div className="flex items-center justify-between p-5">
+        <div className="flex gap-4 items-center mb5">
           <FaChevronLeft
             onClick={() => router.back()}
             className="cursor-pointer"
           />
           <p className="font-bold text-[#d4d4d4]">{problemDetail?.title}</p>
+          <p
+            className={`ring-1 w-fit px-2 py-1 rounded-2xl text-xs ${
+              difficulty === "Hard"
+                ? "text-red-500 ring-red-400"
+                : difficulty === "Easy"
+                ? "text-green-600 ring-green-500"
+                : "text-lime-500 ring-lime-400"
+            }`}
+          >
+            {difficulty}
+          </p>
         </div>
         {isSolved && (
           <p className="text-green-500 flex gap-1.5 items-center">
@@ -56,20 +76,26 @@ const LeftPart = ({
           </p>
         )}
       </div>
-      <p
-        className={`mb-2 ring-1 w-fit px-2 py-1 rounded-2xl text-sm ${
-          difficulty === "Hard"
-            ? "text-red-500 ring-red-400"
-            : difficulty === "Easy"
-            ? "text-green-600 ring-green-500"
-            : "text-lime-500 ring-lime-400"
-        }`}
-      >
-        {difficulty}
-      </p>
-      <div className="text-sm">
-        <Markdown>{questionData!}</Markdown>
+      <div className="px-4 relative">
+        <div
+          style={{ left: `${activeTabIdx * 80 + 16}px` }}
+          className="absolute bottom-0 h-0.5 w-20 bg-tertiary transition-[left] duration-500"
+        />
+        {tabs.map((tab, idx) => (
+          <button
+            key={idx}
+            onClick={() => {
+              setTab(tab), setActiveTabIdx(idx);
+            }}
+            className=" px-2 py-1 w-20"
+          >
+            {tab}
+          </button>
+        ))}
       </div>
+      {tab == "Problem" && <Problem questionData={questionData} />}
+      {tab == "Hints" && <Hints hints={problemDetail?.hints} />}
+      {tab == "Video" && <Video game={ques.game} level={ques.level} />}
     </div>
   );
 };

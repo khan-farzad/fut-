@@ -36,7 +36,6 @@ const EditorHeader = ({
         {languages &&
           languages.map((l, i) => (
             <option
-              selected={l.langSlug == "python"}
               className="text-black"
               key={`${l.langSlug}-${i}`}
               value={l.langSlug}

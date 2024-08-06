@@ -3,30 +3,43 @@
 @tailwind utilities;
 
 .flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .scroll-container {
-    height: 100vh; /* or any height you want */
-    display: flex;
-    flex-direction: column-reverse; /* This makes the content display from bottom to top */
-    overflow-y: auto;
+  height: 100vh; /* or any height you want */
+  display: flex;
+  flex-direction: column-reverse; /* This makes the content display from bottom to top */
+  overflow-y: auto;
 }
 
-.shdw{
-    box-shadow:0 6px 0 rgb(0,0,0,.2),0 6px 0 rgb(55,70,79)
+.shdw {
+  box-shadow: 0 6px 0 rgb(0, 0, 0, 0.2), 0 6px 0 rgb(55, 70, 79);
 }
 
-.shdw:hover{
-    box-shadow:0 2px 0 rgb(0,0,0,.2),0 2px 0 rgb(55,70,79)
+.shdw:hover {
+  box-shadow: 0 2px 0 rgb(0, 0, 0, 0.2), 0 2px 0 rgb(55, 70, 79);
 }
 
-.progress-bar{
-    box-shadow: rgb(0, 0, 0) 1px 1px 6px 0px inset;
+.progress-bar {
+  box-shadow: rgb(0, 0, 0) 1px 1px 6px 0px inset;
 }
 
 pre {
-    text-wrap: wrap;
+  text-wrap: wrap;
+}
+
+.rotate-diamond {
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate3d(0, 1, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
 }
