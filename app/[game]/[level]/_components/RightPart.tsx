@@ -6,7 +6,7 @@ import EditorHeader from "./EditorHeader";
 import { useParams } from "next/navigation";
 import { IoDiamond } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
-import { MetaDataType, ProblemType } from "@/lib/util";
+import { MetaDataType, NodeConstructor, ProblemType } from "@/lib/util";
 
 const RightPart = ({
   questionWidth,
@@ -98,7 +98,6 @@ const RightPart = ({
 
     return outputs;
   }
-
   let expectedTestcases = extractOutputs(
     problemDetail?.content!.replaceAll("&quot;", '"')!
   );
@@ -134,6 +133,13 @@ const RightPart = ({
 
   const getToSend = async () => {
     let toSend = ans;
+    let returnType = metaData.return.type;
+    let paramType = metaData.params[0].type;
+    if (paramType === "ListNode") {
+      toSend = `${NodeConstructor}${ans}`;
+    }
+
+    let toFill = "";
     let exampleTestcasesCounter = 0;
     let expectedTestcasesCounter = 0;
     while (exampleTestcasesCounter < exampleTestcases?.length!) {
@@ -141,12 +147,23 @@ const RightPart = ({
         typeof expectedTestcases[expectedTestcasesCounter] !== "string"
           ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
           : expectedTestcases[expectedTestcasesCounter];
-      let toFill = "";
+      toFill = "";
       for (let i = 0; i < metaData.params.length; i++) {
+        toFill += metaData.params[i].type === "ListNode" ? "arrToNode(" : "";
         toFill += exampleTestcases![exampleTestcasesCounter++];
+        toFill += metaData.params[i].type === "ListNode" ? ")" : "";
         if (i !== metaData.params!.length - 1) toFill += ",";
       }
-      toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
+      if (paramType === "ListNode") {
+        toSend += `\nprint(nodeToArr(Solution().${metaData.name}(${toFill})))`;
+        if (returnType !== "ListNode") {
+          let slicingIdx = toSend?.indexOf("nodeToArr(Solution().");
+          toSend =
+            toSend?.slice(0, slicingIdx)! + toSend?.slice(slicingIdx! + 9)!;
+        }
+      } else {
+        toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
+      }
       expectedTestcasesCounter++;
     }
     const x64 = Buffer.from(toSend!).toString("base64");
@@ -206,7 +223,7 @@ const RightPart = ({
         <Editor
           options={{
             fontSize: 16,
-            wordBasedSuggestionsOnlySameLanguage: true,
+            quickSuggestions: false,
           }}
           value={ans}
           width="100%"

@@ -41,7 +41,7 @@ const Navbar = ({ topics }: NavbarProps) => {
             idx * UNIT_ROTATION_ANGLE
           }deg)`,
         }}
-        className="fixed select-none p-2 top-1/2 -translate-y-1/2 size-96 text-xl -right-48 rounded-full border-secondary/50 border  transition-all duration-300 z-20"
+        className="fixed select-none p-2 top-1/2 -translate-y-1/2 size-96 text-xl -right-72 rounded-full border-secondary/50 border border-dashed  transition-all duration-300 z-20"
       >
         <div
           style={{

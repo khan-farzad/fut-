@@ -43,3 +43,25 @@ export type TopicType = {
     lcSlug: string;
   }[];
 };
+
+export const NodeConstructor = `class ListNode(object):
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+def nodeToArr(head):
+    if not head:
+        return []
+    arr = []
+    while head is not None:
+        arr.append(head.val)
+        head = head.next
+    return arr
+def arrToNode(arr):
+    if len(arr) == 0:
+        return None
+    head = ListNode(arr[0])
+    tmp = head
+    for i in range(1,len(arr)):
+        tmp.next = ListNode(arr[i])
+        tmp = tmp.next
+    return head\n`

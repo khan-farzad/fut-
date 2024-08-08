@@ -48,7 +48,6 @@ const Page = ({ params }: { params: { game: string } }) => {
 
   useEffect(() => {
     getProgress();
-    console.log(deviceWidth)
   }, []);
 
   if (deviceWidth < 768) {

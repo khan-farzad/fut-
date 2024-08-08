@@ -33,16 +33,17 @@ const EditorHeader = ({
           setAns(languages![langIdx].code);
         }}
       >
+        {/* Multi-language support coming soon...
         {languages &&
-          languages.map((l, i) => (
+          languages.map((l, i) => ( */}
             <option
               className="text-black"
-              key={`${l.langSlug}-${i}`}
-              value={l.langSlug}
+              // key={`${l.langSlug}-${i}`}
+              value='python'
             >
-              {l.lang}
+              Python
             </option>
-          ))}
+          {/* ))} */}
       </select>
       <button className="text-white/55 flex-center" onClick={handleRun}>
         {isCompiling ? (
