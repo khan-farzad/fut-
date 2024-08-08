@@ -18,6 +18,7 @@ const config: Config = {
         "primary": "#d4d4d4",
         "secondary": "#858585",
         "tertiary": "#c6c6c6",
+        "this-green": "#58cc02"
       }
     },
   },

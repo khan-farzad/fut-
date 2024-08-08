@@ -35,7 +35,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Learn Important Sorting Techniques",
+    topic: "Sorting Techniques",
     problems: [
       {
         title: "Selection Sort",
@@ -55,7 +55,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Solve Problems on Arrays [Easy -> Medium -> Hard]",
+    topic: "Arrays",
     problems: [
       {
         title: "Check if the array is sorted",
@@ -200,7 +200,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Binary Search [1D, 2D Arrays, Search Space]",
+    topic: "Binary Search",
     problems: [
       {
         title: "Binary Search to find X in sorted array",
@@ -301,7 +301,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Strings [Basic and Medium]",
+    topic: "Strings",
     problems: [
       {
         title: "Remove outermost Paranthesis",
@@ -376,7 +376,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Learn LinkedList [Single LL, Double LL, Medium, Hard Problems]",
+    topic: "LinkedList",
     problems: [
       {
         title: "Deleting a node in LinkedList",
@@ -461,7 +461,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Recursion [PatternWise]",
+    topic: "Recursion",
     problems: [
       {
         title: "Recursive Implementation of atoi()",
@@ -546,7 +546,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Bit Manipulation [Concepts & Problems]",
+    topic: "Bit Manipulation",
     problems: [
       {
         title: "Check if a number is power of 2 or not",
@@ -587,28 +587,12 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic:
-      "Stack and Queues [Learning, Pre-In-Post-fix, Monotonic Stack, Implementation]",
+    topic: "Stack | Queues",
     problems: [
-      {
-        title: "Implement Stack using Queue",
-        lcSlug: "implement-stack-using-queues",
-        ytSlug: "o_NEL0agPGg",
-      },
-      {
-        title: "Implement Queue using Stack",
-        lcSlug: "implement-queue-using-stacks",
-        ytSlug: "o_NEL0agPGg",
-      },
       {
         title: "Check for balanced paranthesis",
         lcSlug: "valid-parentheses",
         ytSlug: "uuE2pEjLiEI",
-      },
-      {
-        title: "Implement Min Stack",
-        lcSlug: "min-stack",
-        ytSlug: "4bjCEJmiPZA",
       },
       {
         title: "Next Greater Element",
@@ -683,7 +667,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Sliding Window & Two Pointer Combined Problems",
+    topic: "Sliding Window",
     problems: [
       {
         title: "Longest Substring Without Repeating Characters",
@@ -743,7 +727,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Heaps [Learning, Medium, Hard Problems]",
+    topic: "Heaps",
     problems: [
       {
         title: "Kth largest element in an array [use priority queue]",
@@ -788,7 +772,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Greedy Algorithms [Easy, Medium/Hard]",
+    topic: "Greedy",
     problems: [
       {
         title: "Assign Cookies",
@@ -838,7 +822,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Binary Trees [Traversals, Medium and Hard Problems]",
+    topic: "Binary Trees",
     problems: [
       {
         title: "Preorder Traversal of Binary Tree",
@@ -983,7 +967,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Binary Search Trees [Concept and Problems]",
+    topic: "Binary Search Trees",
     problems: [
       {
         title: "Search in a Binary Search Tree",
@@ -1043,7 +1027,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Graphs [Concepts & Problems]",
+    topic: "Graphs",
     problems: [
       {
         title: "Connected Components | Logic Explanation",
@@ -1195,7 +1179,7 @@ export const A2ZTopics = [
     ],
   },
   {
-    topic: "Dynamic Programming [Patterns and Problems]",
+    topic: "DP Problems",
     problems: [
       {
         title: "Climbing Stars",
@@ -1399,11 +1383,6 @@ export const A2ZTopics = [
     topic: "Tries",
     problems: [
       {
-        title: "Implement TRIE | INSERT | SEARCH | STARTSWITH",
-        lcSlug: "implement-trie-prefix-tree",
-        ytSlug: "BN-SUKeOYC0",
-      },
-      {
         title: "Maximum XOR of two numbers in an array",
         lcSlug: "maximum-xor-of-two-numbers-in-an-array",
         ytSlug: "OUNfpFswJq8",
@@ -1436,13 +1415,8 @@ export const A2ZTopics = [
       },
       {
         title: "Z-Function",
-        lcSlug: "implement-strstr",
+        lcSlug: "find-the-index-of-the-first-occurrence-in-a-string",
         ytSlug: "QlwzsWs0oyc",
-      },
-      {
-        title: "KMP algo / LPS(pi) array",
-        lcSlug: "implement-strstr",
-        ytSlug: "__Cu92rei1s",
       },
       {
         title: "Shortest Palindrome",
@@ -1460,7 +1434,7 @@ export const A2ZTopics = [
 
 export const CAPTopics = [
   {
-    topic: "Arrays and Hashing",
+    topic: "Arrays & Hashing",
     problems: [
       {
         title: "Next Permutation",
@@ -1560,7 +1534,7 @@ export const CAPTopics = [
     ],
   },
   {
-    topic: "Recursion and Backtracking",
+    topic: "Recursion",
     problems: [
       {
         title: "Print all subsequences/Power Set",
@@ -1590,7 +1564,7 @@ export const CAPTopics = [
     ],
   },
   {
-    topic: "Stacks/Queues",
+    topic: "Stacks | Queues",
     problems: [
       {
         title: "Next Greater Element",
@@ -1730,7 +1704,7 @@ export const CAPTopics = [
     ],
   },
   {
-    topic: "Dynamic Programming",
+    topic: "DP Problems",
     problems: [
       {
         title: "Maximum sum of non-adjacent elements (DP 5)",
@@ -1790,7 +1764,7 @@ export const CAPTopics = [
     ],
   },
   {
-    topic: "String",
+    topic: "Strings",
     problems: [
       {
         title:
@@ -1805,13 +1779,8 @@ export const CAPTopics = [
       },
       {
         title: "Z-Function",
-        lcSlug: "implement-strstr",
+        lcSlug: "find-the-index-of-the-first-occurrence-in-a-string",
         ytSlug: "QlwzsWs0oyc",
-      },
-      {
-        title: "KMP algo / LPS(pi) array",
-        lcSlug: "implement-strstr",
-        ytSlug: "__Cu92rei1s",
       },
     ],
   },
@@ -1904,7 +1873,7 @@ export const Blind75Topics = [
     ],
   },
   {
-    topic: "Dynamic Programming",
+    topic: "DP Problems",
     problems: [
       {
         title: "Climbing Stars",
@@ -1964,7 +1933,7 @@ export const Blind75Topics = [
     ],
   },
   {
-    topic: "Graph",
+    topic: "Graphs",
     problems: [
       {
         title: "Clone Graph",
@@ -2094,7 +2063,7 @@ export const Blind75Topics = [
     ],
   },
   {
-    topic: "String",
+    topic: "Strings",
     problems: [
       {
         title: "Longest Substring Without Repeating Characters",
@@ -2205,11 +2174,6 @@ export const Blind75Topics = [
         title: "Find LCA of two nodes in BST",
         lcSlug: "lowest-common-ancestor-of-a-binary-search-tree",
         ytSlug: "5E3MeajU9XQ",
-      },
-      {
-        title: "Implement Trie (Prefix Tree)",
-        lcSlug: "implement-trie-prefix-tree",
-        ytSlug: "BN-SUKeOYC0",
       },
     ],
   },

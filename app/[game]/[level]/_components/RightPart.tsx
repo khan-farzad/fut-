@@ -37,6 +37,10 @@ const RightPart = ({
       const prevProgress = localStorage.getItem(ques.game);
       if (!prevProgress) {
         localStorage.setItem(ques.game, JSON.stringify([ques.level]));
+        setShowPointsModal(true);
+        setTimeout(() => {
+          setShowPointsModal(false);
+        }, 5000);
         return;
       }
       let prevProgressObj = JSON.parse(prevProgress);
