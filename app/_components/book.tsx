@@ -2,6 +2,7 @@ import Image from "next/image";
 import book2 from "@/public/book2.png";
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { number_of_questions } from "@/lib/util";
 
 const Book = ({
   desc,
@@ -13,15 +14,14 @@ const Book = ({
   index: number;
 }) => {
   const [progress, setProgress] = useState(0);
-  const games = ["noob-to-pro", "cap", "blind-75"];
-  const totalques = [272, 60, 72];
+  const games = ["noob-to-pro", "cap", "blind-75"] as const; 
 
   const fetchProgress = () => {
     try {
       const value = localStorage.getItem(games[index]);
       if (!value) return;
       setProgress(
-        Math.floor((JSON.parse(value).length / totalques[index]) * 100)
+        Math.floor((JSON.parse(value).length / number_of_questions[games[index]]) * 100)
       );
     } catch (error) {
       console.log("error in fetching progress:", error);

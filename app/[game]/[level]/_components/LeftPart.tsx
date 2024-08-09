@@ -1,11 +1,13 @@
-import { ProblemType } from "@/lib/util";
 import { useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
 import Hints from "./_leftPartComponents/Hints";
 import Video from "./_leftPartComponents/Video";
 import Problem from "./_leftPartComponents/Problem";
+import { ProblemType, TopicType } from "@/lib/util";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useParams, useRouter } from "next/navigation";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { BsBookmark, BsBookmarkCheckFill } from "react-icons/bs";
+import { A2ZTopics, Blind75Topics, CAPTopics } from "@/dataFinal";
 
 const LeftPart = ({
   problemDetail,
@@ -22,6 +24,19 @@ const LeftPart = ({
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const ques: { game: string; level: string } = useParams();
 
+  const sheet: { [key: string]: TopicType[] } = {
+    "noob-to-pro": A2ZTopics,
+    cap: CAPTopics,
+    "blind-75": Blind75Topics,
+  };
+  let problems = sheet[ques.game].map((t) => t.problems).flat();
+  const currIdx = problems.findIndex((p) => {
+    return p.lcSlug === ques.level;
+  });
+  const handleChangeQuestion = (change: number) => {
+    router.push(`${problems[currIdx + change].lcSlug}`);
+  };
+
   const isAlreadySolved = () => {
     try {
       const localGame =
@@ -31,6 +46,33 @@ const LeftPart = ({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getIsBookmarked = () => {
+    const bookmarks = localStorage.getItem("bookmarks");
+    if (!bookmarks) {
+      return false;
+    }
+    return JSON.parse(bookmarks).indexOf(ques.level) >= 0 ? true : false;
+  };
+  const [isBookmarked, setIsBookmarked] = useState(getIsBookmarked());
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    const bookmarks = localStorage.getItem("bookmarks");
+    if (!bookmarks) {
+      localStorage.setItem("bookmarks", JSON.stringify([ques.level]));
+      return;
+    }
+    const isAlreadyBookmarked = JSON.parse(bookmarks).indexOf(ques.level);
+    let tmp = JSON.parse(bookmarks);
+    if (isAlreadyBookmarked === -1) {
+      tmp.push(ques.level);
+      localStorage.setItem("bookmarks", JSON.stringify(tmp));
+      return;
+    }
+    tmp.splice(isAlreadyBookmarked, 1);
+    localStorage.setItem("bookmarks", JSON.stringify(tmp));
   };
 
   useEffect(() => {
@@ -76,22 +118,47 @@ const LeftPart = ({
           </p>
         )}
       </div>
-      <div className="px-4 relative">
+      <div className="px-4 relative flex justify-between items-center">
         <div
           style={{ left: `${activeTabIdx * 80 + 16}px` }}
           className="absolute bottom-0 h-0.5 w-20 bg-tertiary transition-[left] duration-500"
         />
-        {tabs.map((tab, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setTab(tab), setActiveTabIdx(idx);
-            }}
-            className=" px-2 py-1 w-20"
-          >
-            {tab}
+        <div>
+          {tabs.map((tab, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setTab(tab), setActiveTabIdx(idx);
+              }}
+              className=" px-2 py-1 w-20"
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <div className="flex-center gap-2 text-tertiary/70">
+          <button onClick={handleBookmark} className="active:scale-95">
+            {isBookmarked ? (
+              <BsBookmarkCheckFill className="text-this-green" />
+            ) : (
+              <BsBookmark />
+            )}
           </button>
-        ))}
+          <button
+            disabled={currIdx === 0}
+            onClick={() => handleChangeQuestion(-1)}
+            className="active:scale-95 hover:opacity-45 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            disabled={currIdx === problems.length - 1}
+            onClick={() => handleChangeQuestion(1)}
+            className="active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 hover:opacity-45"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
       </div>
       {tab == "Problem" && <Problem questionData={questionData} />}
       {tab == "Hints" && <Hints hints={problemDetail?.hints} />}

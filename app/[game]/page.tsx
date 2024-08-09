@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import logo2 from "@/public/logo2.png";
-import { TopicType } from "@/lib/util";
+import { number_of_questions, TopicType } from "@/lib/util";
 import { FaCheck } from "react-icons/fa";
 import Navbar from "./_components/Navbar";
 import { useRouter } from "next/navigation";
@@ -21,9 +21,8 @@ const Page = ({ params }: { params: { game: string } }) => {
   const [progress, setProgress] = useState<string[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [currentTopic, setCurrentTopic] = useState<string>("Learn Basics");
-  const lengthOfGame = { "noob-to-pro": 272, cap: 60, "blind-75": 72 };
   const topicRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const progressPercentage = (progress.length / lengthOfGame[game]) * 100;
+  const progressPercentage = (progress.length / number_of_questions[game]) * 100;
   const sheet: { [key: string]: TopicType[] } = {
     "noob-to-pro": A2ZTopics,
     cap: CAPTopics,
@@ -132,7 +131,7 @@ const Page = ({ params }: { params: { game: string } }) => {
           style={{}}
           className="absolute -bottom-7 -translate-x-[30%] w-fit truncate"
         >
-          {progress.length} / {lengthOfGame[game]}
+          {progress.length} / {number_of_questions[game]}
         </div>
       </div>
       <div className="pt-5">

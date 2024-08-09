@@ -65,3 +65,9 @@ def arrToNode(arr):
         tmp.next = ListNode(arr[i])
         tmp = tmp.next
     return head\n`
+
+export const number_of_questions = {
+  "noob-to-pro": 267,
+  cap: 59,
+  "blind-75": 71,
+};
