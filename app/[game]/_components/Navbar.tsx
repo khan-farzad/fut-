@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 type NavbarProps = {
   topics: string[];
+  handleScroll: (topic: string) => void;
+  currentTopic: string;
 };
 
-const Navbar = ({ topics }: NavbarProps) => {
+const Navbar = ({ topics, handleScroll, currentTopic }: NavbarProps) => {
   const [idx, setIdx] = useState(0);
   const UNIT_ROTATION_ANGLE = 360 / topics.length;
 
@@ -25,13 +27,18 @@ const Navbar = ({ topics }: NavbarProps) => {
     }
     const option1 = forwardPtr - start;
     const option2 = start - backwardPtr;
-    return option1 < option2 ? option1 : -option2
+    return option1 < option2 ? option1 : -option2;
   };
 
   const handleClick = (clickedIdx: number) => {
     let faasla = getFaasla(topics.length, idx % topics.length, clickedIdx);
     setIdx((prevIdx) => prevIdx + faasla);
   };
+
+  useEffect(() => {
+    const idx = topics.indexOf(currentTopic);
+    if (idx != -1) handleClick(idx);
+  }, [currentTopic]);
 
   return (
     <>
@@ -63,9 +70,8 @@ const Navbar = ({ topics }: NavbarProps) => {
             }}
             className="absolute  w-full h-8 top-1/2 -translate-y-1/2 -left-1/2 origin-right"
           >
-            <a
-              href={`#${t}`}
-              onClick={() => handleClick(i)}
+            <button
+              onClick={() => handleScroll(t)}
               className={`flex cursor-pointer  justify-end items-center px-1 w-1/2 ${
                 idx % topics.length === i
                   ? "text-this-green text-xl"
@@ -73,7 +79,7 @@ const Navbar = ({ topics }: NavbarProps) => {
               } h-full`}
             >
               {t}
-            </a>
+            </button>
           </div>
         ))}
       </div>

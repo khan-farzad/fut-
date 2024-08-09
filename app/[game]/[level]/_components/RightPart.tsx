@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useState } from "react";
 import Terminal from "./Terminal";
 import Confetti from "react-confetti";
 import EditorHeader from "./EditorHeader";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { IoDiamond } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
@@ -98,9 +98,14 @@ const RightPart = ({
 
     return outputs;
   }
-  let expectedTestcases = extractOutputs(
-    problemDetail?.content!.replaceAll("&quot;", '"')!
-  );
+  const expectedTestcases = useMemo(() => {
+    if (problemDetail?.content) {
+      return extractOutputs(problemDetail.content.replaceAll("&quot;", '"'));
+    }
+    return [];
+  }, [problemDetail?.content]);
+
+  
   const handleRun2 = async () => {
     setIsCompiling(true);
     try {
