@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
 import logo2 from "@/public/logo2.png";
-import { number_of_questions, TopicType } from "@/lib/util";
 import { FaCheck } from "react-icons/fa";
+import Header from "./_components/Header";
 import Navbar from "./_components/Navbar";
 import { useRouter } from "next/navigation";
-import TotalPoints from "./_components/TotalPoints";
 import SearchModal from "./_components/SearchModal";
 import { useEffect, useRef, useState } from "react";
+import { number_of_questions, TopicType } from "@/lib/util";
 import { A2ZTopics, Blind75Topics, CAPTopics } from "@/dataFinal";
 import { IoIosSearch } from "react-icons/io";
 
@@ -95,6 +95,14 @@ const Page = ({ params }: { params: { game: string } }) => {
       console.log(`Element with id ${topic} not found.`);
     }
   };
+  
+  const randomQues=()=>{
+    const current=sheet[game]
+    const RandomTopic=current[Math.floor(Math.random()*current.length-1)+1]
+    const currentQues=RandomTopic.problems
+    const randomQ=currentQues[Math.floor(Math.random()*currentQues.length-1)+1]
+    return randomQ.lcSlug
+  }
 
   return (
     <div
@@ -120,7 +128,7 @@ const Page = ({ params }: { params: { game: string } }) => {
         topics={getTopics()}
         currentTopic={currentTopic}
       />
-      <TotalPoints />
+      <Header randomQues={randomQues()} game={game}/>
       {/* <div className="dark:block fixed z-[100] top-1/3 -right-[160px] size-52 bg-this-green rounded-full opacity-40 blur-[120px] dark:opacity-50"></div> */}
       <div className=" fixed left-16 w-2 h-[90%] mt-[3%] bg-secondary/25 rounded-full overflow">
         <div

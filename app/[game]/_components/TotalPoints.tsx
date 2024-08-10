@@ -21,7 +21,7 @@ const TotalPoints = () => {
     getTotalPoints();
   }, []);
   return (
-    <div className="fixed top-2 right-10 flex-center gap-2">
+    <div className="flex-center gap-2">
       <IoDiamond className="rotate-diamond" />
       <p>{points * 10}</p>
     </div>

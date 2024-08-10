@@ -16,10 +16,10 @@ export default function Home() {
       <p className="text-2xl text-center text-white tracking-tighter">
         KickStart your coding journey in the right direction!
       </p>
-      <div className="flex-col lg:flex-row flex-center gap-20 *:size-60 *:bg-blac *:cursor-pointer">
+      <div className="flex-col lg:flex-row flex-center gap-20 *:size-60 *:bg-blac *:cursor-pointer *:duration-500">
         <div
           onClick={() => router.push("/noob-to-pro")}
-          className="relative z-0"
+          className="relative z-0 hover:-translate-y-4"
         >
           <Book
             index={0}
@@ -27,14 +27,20 @@ export default function Home() {
             desc="Start from the basics, build a strong base and get the hang of it."
           />
         </div>
-        <div onClick={() => router.push("/cap")} className="relative z-0">
+        <div
+          onClick={() => router.push("/cap")}
+          className="relative z-0 hover:-translate-y-4"
+        >
           <Book
             index={1}
             title="CAP"
             desc="Commonly Asked Problems. Get interview ready with questions that are most probable."
           />
         </div>
-        <div onClick={() => router.push("/blind-75")} className="relative z-0">
+        <div
+          onClick={() => router.push("/blind-75")}
+          className="relative z-0 hover:-translate-y-4"
+        >
           <Book
             index={2}
             title="Blind 75"
