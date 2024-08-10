@@ -1,12 +1,11 @@
 import axios from "axios";
 import Terminal from "./Terminal";
-import Confetti from "react-confetti";
 import EditorHeader from "./EditorHeader";
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { IoDiamond } from "react-icons/io5";
 import { Editor } from "@monaco-editor/react";
 import { MetaDataType, NodeConstructor, ProblemType } from "@/lib/util";
+import ConfettiModal from "./_rightPartComponents/ConfettiModal";
 
 const RightPart = ({
   questionWidth,
@@ -21,11 +20,15 @@ const RightPart = ({
   const [isCompiling, setIsCompiling] = useState(false);
   const [expected, setExpected] = useState<string[]>([]);
   const [solutionHeight, setSolutionHeight] = useState(50);
-  const [selectedLang, setSelectedLang] = useState("python");
+  const [selectedLang, setSelectedLang] = useState("java");
   const [showPointsModal, setShowPointsModal] = useState(false);
   const [activeTestCaseIndex, setActiveTestCaseIndex] = useState(0);
-  const [ans, setAns] = useState(problemDetail?.codeSnippets[2].code);
+  const [ans, setAns] = useState(problemDetail?.codeSnippets[1].code);
 
+  const getLanguageId: { [key: string]: number } = {
+    python: 70,
+    java: 91,
+  };
   const qId = problemDetail?.questionId;
   let metaData: MetaDataType = JSON.parse(
     problemDetail!.metaData.replaceAll("\n", "")
@@ -83,19 +86,22 @@ const RightPart = ({
         ) {
           outputs.push(
             outputStr === "true"
-              ? "True"
+              ? selectedLang === "java"
+                ? "true"
+                : "True"
               : outputStr === "false"
-              ? "False"
+              ? selectedLang === "java"
+                ? "false"
+                : "False"
               : parseFloat(outputStr)
           );
         } else {
-          outputs.push(outputStr);
+          outputs.push(outputStr.replaceAll('"', ""));
         }
       } catch (error) {
-        console.error("Error parsing JSON:", error);
+        console.log("Error parsing JSON:", error);
       }
     }
-
     return outputs;
   }
   const expectedTestcases = useMemo(() => {
@@ -103,9 +109,8 @@ const RightPart = ({
       return extractOutputs(problemDetail.content.replaceAll("&quot;", '"'));
     }
     return [];
-  }, [problemDetail?.content]);
+  }, [problemDetail?.content, selectedLang]);
 
-  
   const handleRun2 = async () => {
     setIsCompiling(true);
     try {
@@ -114,9 +119,12 @@ const RightPart = ({
         url: "/api/judge",
         data: {
           toSend: await getToSend(),
+          langId: getLanguageId[selectedLang],
         },
       });
       setError(response.data.data.stderr);
+      if (response.data.data.compile_output)
+        setError(response.data.data.compile_output);
       if (response.data.data.stdout) {
         let tmpOutput = response.data.data.stdout
           .replaceAll(", ", ",")
@@ -135,28 +143,58 @@ const RightPart = ({
       setIsCompiling(false);
     }
   };
-
+  
   const getToSend = async () => {
     let toSend = ans;
+    let isJava = selectedLang === "java";
     let returnType = metaData.return.type;
     let paramType = metaData.params[0].type;
     if (paramType === "ListNode") {
       toSend = `${NodeConstructor}${ans}`;
     }
-
-    let toFill = "";
-    let exampleTestcasesCounter = 0;
-    let expectedTestcasesCounter = 0;
-    while (exampleTestcasesCounter < exampleTestcases?.length!) {
-      expectedTestcases[expectedTestcasesCounter] =
+    
+    if (isJava) {
+      toSend = `\nimport java.util.Arrays;\n${ans}\nclass Main {
+        public static void main(String[] args) {\n`;
+      }
+      let toFill = "";
+      let exampleTestcasesCounter = 0;
+      let expectedTestcasesCounter = 0;
+      while (exampleTestcasesCounter < exampleTestcases?.length!) {
+        expectedTestcases[expectedTestcasesCounter] =
         typeof expectedTestcases[expectedTestcasesCounter] !== "string"
-          ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
-          : expectedTestcases[expectedTestcasesCounter];
-      toFill = "";
+        ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
+        : expectedTestcases[expectedTestcasesCounter];
+        toFill = "";
       for (let i = 0; i < metaData.params.length; i++) {
+        if (isJava) {
+          const javaParams = metaData.params[i].type;
+          exampleTestcases = exampleTestcases?.map(eg => {
+            return eg.replace('[','').replace(']','')
+          })
+          if (javaParams.includes("[][]")) {
+            if (javaParams.includes("integer")) {
+              toFill += `new int[][]{`;
+            } else {
+              toFill += `new ${javaParams}{`;
+            }
+          }
+          else if( javaParams.includes("[]")) {
+            if (javaParams.includes("integer")) {
+              toFill += `new int[]{`;
+            } else {
+              toFill += `new ${javaParams}{`;
+            }
+
+          }
+        }
+        
         toFill += metaData.params[i].type === "ListNode" ? "arrToNode(" : "";
         toFill += exampleTestcases![exampleTestcasesCounter++];
         toFill += metaData.params[i].type === "ListNode" ? ")" : "";
+        if (isJava && metaData.params[i].type.includes("[]")) {
+          toFill += `}`;
+        }
         if (i !== metaData.params!.length - 1) toFill += ",";
       }
       if (paramType === "ListNode") {
@@ -167,9 +205,23 @@ const RightPart = ({
             toSend?.slice(0, slicingIdx)! + toSend?.slice(slicingIdx! + 9)!;
         }
       } else {
-        toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
+        if (isJava && returnType.includes('[]')) {
+          toSend += `System.out.println(Arrays.toString(new Solution().${metaData.name}(${toFill})));\n`;
+          
+        } 
+        else if (isJava ) {
+          toSend += `System.out.println((new Solution().${metaData.name}(${toFill})));\n`;
+
+        }
+        else {
+          toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
+        }
       }
       expectedTestcasesCounter++;
+    }
+    if (isJava) {
+      toSend += `    }
+}`;
     }
     const x64 = Buffer.from(toSend!).toString("base64");
     return x64;
@@ -197,23 +249,7 @@ const RightPart = ({
   };
   return (
     <>
-      {showPointsModal && (
-        <div className="absolute inset-0 size-full bg-black/30 z-[100] flex-center text-white text-4xl">
-          <div className=" top-2 right-10 flex-center gap-2">
-            <Confetti
-              recycle={false}
-              confettiSource={{
-                x: window.innerWidth / 2,
-                y: window.innerHeight / 2,
-                w: 0,
-                h: 0,
-              }}
-            />
-            <IoDiamond className="rotate-diamond" />
-            <p>+10</p>
-          </div>
-        </div>
-      )}
+      {showPointsModal && <ConfettiModal />}
       <div
         style={{ width: ` ${100 - questionWidth}%` }}
         className="flex flex-col bg-[#1E1E1E] text-primary relative grow"

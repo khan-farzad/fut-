@@ -92,7 +92,7 @@ const Page = ({ params }: { params: { game: string } }) => {
     if (ele) {
       ele.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      console.error(`Element with id ${topic} not found.`);
+      console.log(`Element with id ${topic} not found.`);
     }
   };
 

@@ -16,14 +16,14 @@ const HEADERS = [
 
 export async function POST(request: NextRequest) {
   try {
-    const { toSend } = await request.json();
+    const { toSend, langId } = await request.json();
     let response;
     let postOptions = {
       method: "post",
       url: `https://${process.env.API_HOST}/submissions?base64_encoded=true&wait=false&fields=*`,
       headers: HEADERS[0],
       data: {
-        language_id: 70,
+        language_id: langId,
         source_code: toSend,
         stdin: "",
       },
