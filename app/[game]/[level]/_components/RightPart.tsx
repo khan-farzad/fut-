@@ -58,6 +58,39 @@ const RightPart = ({
     } catch (error) {}
   };
 
+  const addSubmissionDate = () => {
+    try {
+      const submissions = localStorage.getItem("submissions");
+      const todayDate = new Date().getDate();
+      const currentMonth = new Date().getMonth();
+      if (!submissions) {
+        let tmp: Record<number, number[][]> = {
+          [currentMonth]: [[todayDate, 1]],
+        };
+        localStorage.setItem("submissions", JSON.stringify(tmp));
+        return;
+      }
+      let todaysProgress = JSON.parse(submissions);
+      if (!todaysProgress[currentMonth]) {
+        todaysProgress[currentMonth] = [[todayDate, 1]];
+        localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+        return;
+      }
+      let idxOfTodaysFrequency = todaysProgress[currentMonth]
+        .map((ele: any) => ele[0] == todayDate)
+        .indexOf(true);
+      if (idxOfTodaysFrequency == -1) {
+        todaysProgress[currentMonth].push([[todayDate, 1]]);
+        localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+        return;
+      }
+      todaysProgress[currentMonth][idxOfTodaysFrequency][1] += 1;
+      localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+    } catch (error) {
+      console.log("error in adding submissions in local storage");
+    }
+  };
+
   function extractOutputs(str: string) {
     const regex =
       /<strong>Output:<\/strong>\s*(\[\[.*?\]\]|\[.*?\]|".*?"|'.*?'|-?\d+|\w+|<span class="example-io">.*?<\/span>)/g;
@@ -134,6 +167,7 @@ const RightPart = ({
         setExpected(expectedTestcases);
         if (JSON.stringify(expectedTestcases) == JSON.stringify(tmpOutput)) {
           addProgress();
+          addSubmissionDate();
           window.dispatchEvent(new Event("correctSolution"));
         }
       }
@@ -143,7 +177,7 @@ const RightPart = ({
       setIsCompiling(false);
     }
   };
-  
+
   const getToSend = async () => {
     let toSend = ans;
     let isJava = selectedLang === "java";
@@ -152,43 +186,41 @@ const RightPart = ({
     if (paramType === "ListNode") {
       toSend = `${NodeConstructor}${ans}`;
     }
-    
+
     if (isJava) {
       toSend = `\nimport java.util.Arrays;\n${ans}\nclass Main {
         public static void main(String[] args) {\n`;
-      }
-      let toFill = "";
-      let exampleTestcasesCounter = 0;
-      let expectedTestcasesCounter = 0;
-      while (exampleTestcasesCounter < exampleTestcases?.length!) {
-        expectedTestcases[expectedTestcasesCounter] =
+    }
+    let toFill = "";
+    let exampleTestcasesCounter = 0;
+    let expectedTestcasesCounter = 0;
+    while (exampleTestcasesCounter < exampleTestcases?.length!) {
+      expectedTestcases[expectedTestcasesCounter] =
         typeof expectedTestcases[expectedTestcasesCounter] !== "string"
-        ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
-        : expectedTestcases[expectedTestcasesCounter];
-        toFill = "";
+          ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
+          : expectedTestcases[expectedTestcasesCounter];
+      toFill = "";
       for (let i = 0; i < metaData.params.length; i++) {
         if (isJava) {
           const javaParams = metaData.params[i].type;
-          exampleTestcases = exampleTestcases?.map(eg => {
-            return eg.replace('[','').replace(']','')
-          })
+          exampleTestcases = exampleTestcases?.map((eg) => {
+            return eg.replace("[", "").replace("]", "");
+          });
           if (javaParams.includes("[][]")) {
             if (javaParams.includes("integer")) {
               toFill += `new int[][]{`;
             } else {
               toFill += `new ${javaParams}{`;
             }
-          }
-          else if( javaParams.includes("[]")) {
+          } else if (javaParams.includes("[]")) {
             if (javaParams.includes("integer")) {
               toFill += `new int[]{`;
             } else {
               toFill += `new ${javaParams}{`;
             }
-
           }
         }
-        
+
         toFill += metaData.params[i].type === "ListNode" ? "arrToNode(" : "";
         toFill += exampleTestcases![exampleTestcasesCounter++];
         toFill += metaData.params[i].type === "ListNode" ? ")" : "";
@@ -205,15 +237,11 @@ const RightPart = ({
             toSend?.slice(0, slicingIdx)! + toSend?.slice(slicingIdx! + 9)!;
         }
       } else {
-        if (isJava && returnType.includes('[]')) {
+        if (isJava && returnType.includes("[]")) {
           toSend += `System.out.println(Arrays.toString(new Solution().${metaData.name}(${toFill})));\n`;
-          
-        } 
-        else if (isJava ) {
+        } else if (isJava) {
           toSend += `System.out.println((new Solution().${metaData.name}(${toFill})));\n`;
-
-        }
-        else {
+        } else {
           toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
         }
       }
@@ -223,6 +251,7 @@ const RightPart = ({
       toSend += `    }
 }`;
     }
+    return toSend
     const x64 = Buffer.from(toSend!).toString("base64");
     return x64;
   };

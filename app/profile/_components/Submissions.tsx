@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Month from "./Month";
 type MonthData = {
   totalDays: number;
@@ -56,17 +56,17 @@ const Submissions = () => {
       totalDays: 31,
     },
   };
-  const [progress,setProgress]=useState<Record<number,number[][]>>({})
+  const [progress, setProgress] = useState<Record<number, number[][]>>({});
 
-  // const progress: { [key: number]: number[][] } = JSON.parse(
-  //   localStorage.getItem("submissions") || "null"
-  // );
+  const getProgress = () => {
+    const prevProgress = localStorage.getItem("submissions");
+    if (!prevProgress) return;
+    setProgress(JSON.parse(prevProgress));
+  };
 
-  const getProgress=()=>{
-    const prevProgress=localStorage.getItem("submissions") 
-    if(!prevProgress) return
-    setProgress(JSON.parse(prevProgress))
-  }
+  useEffect(() => {
+    getProgress();
+  }, []);
 
   return (
     <div className="my-8 ">
