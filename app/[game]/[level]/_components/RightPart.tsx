@@ -251,7 +251,6 @@ const RightPart = ({
       toSend += `    }
 }`;
     }
-    return toSend
     const x64 = Buffer.from(toSend!).toString("base64");
     return x64;
   };
