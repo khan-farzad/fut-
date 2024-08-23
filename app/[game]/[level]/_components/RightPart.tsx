@@ -66,6 +66,39 @@ const RightPart = ({
     } catch (error) {}
   };
 
+  const addSubmissionDate = () => {
+    try {
+      const submissions = localStorage.getItem("submissions");
+      const todayDate = new Date().getDate();
+      const currentMonth = new Date().getMonth();
+      if (!submissions) {
+        let tmp: Record<number, number[][]> = {
+          [currentMonth]: [[todayDate, 1]],
+        };
+        localStorage.setItem("submissions", JSON.stringify(tmp));
+        return;
+      }
+      let todaysProgress = JSON.parse(submissions);
+      if (!todaysProgress[currentMonth]) {
+        todaysProgress[currentMonth] = [[todayDate, 1]];
+        localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+        return;
+      }
+      let idxOfTodaysFrequency = todaysProgress[currentMonth]
+        .map((ele: any) => ele[0] == todayDate)
+        .indexOf(true);
+      if (idxOfTodaysFrequency == -1) {
+        todaysProgress[currentMonth].push([[todayDate, 1]]);
+        localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+        return;
+      }
+      todaysProgress[currentMonth][idxOfTodaysFrequency][1] += 1;
+      localStorage.setItem("submissions", JSON.stringify(todaysProgress));
+    } catch (error) {
+      console.log("error in adding submissions in local storage");
+    }
+  };
+
   const handleRun2 = async () => {
     setIsCompiling(true);
     try {
@@ -89,6 +122,7 @@ const RightPart = ({
         setExpected(expectedTestcases);
         if (JSON.stringify(expectedTestcases) == JSON.stringify(tmpOutput)) {
           addProgress();
+          addSubmissionDate();
           window.dispatchEvent(new Event("correctSolution"));
         }
       }

@@ -9,6 +9,8 @@ const Problem = ({ questionData }: { questionData: string | undefined }) => {
             le: "\u2264",
             ge: "\u2265",
             "#39": "\u0027",
+            "lfloor":'\u230A',
+            "rfloor":'\u230b'
           },
         }}
       >
