@@ -1,7 +1,8 @@
 "use client";
+import { TopicType } from "@/lib/util";
 import { useEffect, useState } from "react";
 type NavbarProps = {
-  topics: string[];
+  topics: TopicType[];
   handleScroll: (topic: string) => void;
   currentTopic: string;
 };
@@ -36,7 +37,7 @@ const Navbar = ({ topics, handleScroll, currentTopic }: NavbarProps) => {
   };
 
   useEffect(() => {
-    const idx = topics.indexOf(currentTopic);
+    const idx = topics.findIndex((t) => t.name === currentTopic);
     if (idx != -1) handleClick(idx);
   }, [currentTopic]);
 
@@ -71,14 +72,14 @@ const Navbar = ({ topics, handleScroll, currentTopic }: NavbarProps) => {
             className="absolute  w-full h-8 top-1/2 -translate-y-1/2 -left-1/2 origin-right"
           >
             <button
-              onClick={() => handleScroll(t)}
+              onClick={() => handleScroll(t.name)}
               className={`flex cursor-pointer  justify-end items-center px-1 w-1/2 ${
                 idx % topics.length === i
                   ? "text-this-green text-xl"
                   : "text-secondary/25 text-lg hover:text-secondary"
               } h-full`}
             >
-              {t}
+              {t.name}
             </button>
           </div>
         ))}
