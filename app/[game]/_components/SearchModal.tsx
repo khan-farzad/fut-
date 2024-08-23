@@ -17,12 +17,12 @@ const SearchModal = ({
 }: SearchModalProps) => {
   const sheet = useParams();
   const router = useRouter();
-  let topics = game.map((t) => t.topic);
+  let topics = game.map((t) => t.name);
   let problems = game.map((t) => t.problems).flat();
   const [filteredProblems, setFilteredProblems] = useState<
     {
       title: string;
-      lcSlug: string;
+      titleSlug: string;
     }[]
   >();
   const [recommendation, setRecommendation] = useState("");
@@ -116,7 +116,7 @@ const SearchModal = ({
               {filteredProblems?.map((p, i) => (
                 <button
                   key={i}
-                  onClick={() => router.push(`/${sheet.game}/${p.lcSlug}`)}
+                  onClick={() => router.push(`/${sheet.game}/${p.titleSlug}`)}
                   className="mb-1"
                 >
                   {p.title}

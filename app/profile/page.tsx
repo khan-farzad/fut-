@@ -18,7 +18,7 @@ const Home = () => {
   const validGame = ["noob-to-pro", "blind-75", "cap"] as const;
   const visibleNames = ["Noob-to-Pro", "Blind-75", "CAP"];
 
-  const getSolvedQues = useMemo(() => {
+  const getSolvedQues = () => {
     try {
       let tempQues: string[] = [];
       let waterLevels: number[] = [0, 0, 0];
@@ -34,13 +34,18 @@ const Home = () => {
       setWaterLevel(waterLevels);
       setSolvedQues(tempQues);
     } catch (error) {}
-  },[])
+  };
 
-  const getBookmarkedQues=useMemo(()=>{
-    const bookmarks=localStorage.getItem('bookmarks')
-    if(!bookmarks) return
-    setBookmarkedQues(JSON.parse(bookmarks))
-  },[])
+  const getBookmarkedQues = () => {
+    const bookmarks = localStorage.getItem("bookmarks");
+    if (!bookmarks) return;
+    setBookmarkedQues(JSON.parse(bookmarks));
+  };
+
+  useEffect(() => {
+    getSolvedQues();
+    getBookmarkedQues();
+  }, []);
 
   return (
     <div className="bg-background min-h-screen flex">

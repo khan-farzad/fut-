@@ -58,11 +58,15 @@ const Submissions = () => {
   };
   const [progress, setProgress] = useState<Record<number, number[][]>>({});
 
-  const getProgress=()=>{
-    const prevProgress=localStorage.getItem("submissions") 
-    if(!prevProgress) return
-    setProgress(JSON.parse(prevProgress))
-  }
+  const getProgress = () => {
+    const prevProgress = localStorage.getItem("submissions");
+    if (!prevProgress) return;
+    setProgress(JSON.parse(prevProgress));
+  };
+
+  useEffect(() => {
+    getProgress();
+  }, []);
 
   return (
     <div className="my-8 ">

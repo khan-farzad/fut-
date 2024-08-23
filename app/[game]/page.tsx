@@ -19,7 +19,7 @@ const Page = ({ params }: { params: { game: string } }) => {
   const router = useRouter();
   const game = params.game as GameType;
   const deviceWidth = window.innerWidth;
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   const [problems, setProblems] = useState<TopicType[]>([]);
   const [progress, setProgress] = useState<string[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -68,12 +68,21 @@ const Page = ({ params }: { params: { game: string } }) => {
       });
       setProblems(dataF);
     } catch (error) {
-      console.log('error in fetching problems')
+      console.log("error in fetching problems");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-
   }, []);
+
+  const randomQues = useCallback(() => {
+    if (problems.length <= 0) return;
+    const RandomTopic =
+      problems[Math.floor(Math.random() * problems.length - 1) + 1];
+    const currentQues = RandomTopic.problems;
+    const randomQ =
+      currentQues[Math.floor(Math.random() * currentQues.length - 1) + 1];
+    return randomQ.titleSlug;
+  }, [problems]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,18 +125,7 @@ const Page = ({ params }: { params: { game: string } }) => {
     }
   };
 
-  const randomQues = useCallback(() => {
-    if (problems.length <= 0) return;
-    const RandomTopic =
-      problems[Math.floor(Math.random() * problems.length - 1) + 1];
-    const currentQues = RandomTopic.problems;
-    const randomQ =
-      currentQues[Math.floor(Math.random() * currentQues.length - 1) + 1];
-    return randomQ.titleSlug;
-  }, [problems]);
-
-  if(isLoading)
-    return <Loading/>
+  if (isLoading) return <Loading />;
 
   return (
     <div
