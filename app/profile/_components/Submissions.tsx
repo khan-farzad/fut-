@@ -58,10 +58,6 @@ const Submissions = () => {
   };
   const [progress,setProgress]=useState<Record<number,number[][]>>({})
 
-  // const progress: { [key: number]: number[][] } = JSON.parse(
-  //   localStorage.getItem("submissions") || "null"
-  // );
-
   const getProgress=()=>{
     const prevProgress=localStorage.getItem("submissions") 
     if(!prevProgress) return
@@ -71,7 +67,7 @@ const Submissions = () => {
   return (
     <div className="my-8 ">
       <h2 className="text-center text-3xl text-this-green">Submissions</h2>
-      <div className="flex-center over shrink-0 gap-2 ">
+      <div className="flex items-center shrink-0 gap-2 max-w-full overflow-scroll">
         {Object.keys(months).map((m, i) => (
           <div key={i} className="flex-center shrink-0 flex-col text-primary">
             <Month

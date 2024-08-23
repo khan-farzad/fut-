@@ -1,7 +1,6 @@
 "use client";
 import { RxAvatar } from "react-icons/rx";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { FaAngleDown } from "react-icons/fa";
 import { number_of_questions } from "@/lib/util";
 import Submissions from "./_components/Submissions";
@@ -19,7 +18,7 @@ const Home = () => {
   const validGame = ["noob-to-pro", "blind-75", "cap"] as const;
   const visibleNames = ["Noob-to-Pro", "Blind-75", "CAP"];
 
-  const getSolvedQues = () => {
+  const getSolvedQues = useMemo(() => {
     try {
       let tempQues: string[] = [];
       let waterLevels: number[] = [0, 0, 0];
@@ -35,22 +34,17 @@ const Home = () => {
       setWaterLevel(waterLevels);
       setSolvedQues(tempQues);
     } catch (error) {}
-  };
+  },[])
 
-  const getBookmarkedQues=()=>{
+  const getBookmarkedQues=useMemo(()=>{
     const bookmarks=localStorage.getItem('bookmarks')
     if(!bookmarks) return
     setBookmarkedQues(JSON.parse(bookmarks))
-  }
-
-  useEffect(() => {
-    getSolvedQues();
-    getBookmarkedQues()
-  }, []);
+  },[])
 
   return (
     <div className="bg-background min-h-screen flex">
-      <div className="w-1/5  flex justify-start items-center flex-col border-r-this-green border-r-2 text-tertiary gap-5 min-h-full">
+      <div className="w-1/5 flex justify-start items-center flex-col border-r-this-green border-r-2 text-tertiary gap-5 min-h-full">
         <RxAvatar size={150} className="mt-20" />
         <h2>Anonymous</h2>
         <TotalPoints />

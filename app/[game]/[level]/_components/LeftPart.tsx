@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import Hints from "./_leftPartComponents/Hints";
 import Video from "./_leftPartComponents/Video";
 import Problem from "./_leftPartComponents/Problem";
-import { ProblemType, TopicType } from "@/lib/util";
+import { ProblemType } from "@/lib/util";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useParams, useRouter } from "next/navigation";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { BsBookmark, BsBookmarkCheckFill } from "react-icons/bs";
-import { A2ZTopics, Blind75Topics, CAPTopics } from "@/dataFinal";
+import supabase from "@/lib/dbConfig";
+const FIRST_QUES_ID = 11;
+const LAST_QUES_ID = 376;
 
 const LeftPart = ({
   problemDetail,
@@ -24,17 +26,14 @@ const LeftPart = ({
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const ques: { game: string; level: string } = useParams();
 
-  const sheet: { [key: string]: TopicType[] } = {
-    "noob-to-pro": A2ZTopics,
-    cap: CAPTopics,
-    "blind-75": Blind75Topics,
-  };
-  let problems = sheet[ques.game].map((t) => t.problems).flat();
-  const currIdx = problems.findIndex((p) => {
-    return p.lcSlug === ques.level;
-  });
-  const handleChangeQuestion = (change: number) => {
-    router.push(`${problems[currIdx + change].lcSlug}`);
+  const handleChangeQuestion = async (change: number) => {
+    try {
+      const { data, error } = await supabase
+        .from("Problems")
+        .select("titleSlug")
+        .eq("id", problemDetail?.id! + change);
+      router.push(`${data![0].titleSlug}`);
+    } catch (error) {}
   };
 
   const isAlreadySolved = () => {
@@ -145,14 +144,14 @@ const LeftPart = ({
             )}
           </button>
           <button
-            disabled={currIdx === 0}
+            disabled={problemDetail?.id === FIRST_QUES_ID}
             onClick={() => handleChangeQuestion(-1)}
             className="active:scale-95 hover:opacity-45 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <FaChevronLeft />
           </button>
           <button
-            disabled={currIdx === problems.length - 1}
+            disabled={problemDetail?.id === LAST_QUES_ID}
             onClick={() => handleChangeQuestion(1)}
             className="active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 hover:opacity-45"
           >
@@ -162,7 +161,7 @@ const LeftPart = ({
       </div>
       {tab == "Problem" && <Problem questionData={questionData} />}
       {tab == "Hints" && <Hints hints={problemDetail?.hints} />}
-      {tab == "Video" && <Video game={ques.game} level={ques.level} />}
+      {tab == "Video" && <Video ytSlug={problemDetail!.ytSlug} />}
     </div>
   );
 };

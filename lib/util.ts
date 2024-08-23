@@ -2,6 +2,9 @@ export type ProblemType = {
   questionId: string;
   title: string;
   titleSlug: string;
+  id: number;
+  ytSlug: string;
+  expectedOutput: any;
   content: string;
   isPaidOnly: boolean;
   difficulty: string;
@@ -37,10 +40,10 @@ export type MetaDataType = {
 };
 
 export type TopicType = {
-  topic: string;
+  name: string;
   problems: {
     title: string;
-    lcSlug: string;
+    titleSlug: string;
   }[];
 };
 
@@ -71,3 +74,5 @@ export const number_of_questions = {
   cap: 59,
   "blind-75": 71,
 };
+
+export const roadmap = ["noob-to-pro", "cap", "blind-75"];

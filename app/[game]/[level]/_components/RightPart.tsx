@@ -1,7 +1,7 @@
 import axios from "axios";
 import Terminal from "./Terminal";
 import EditorHeader from "./EditorHeader";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Editor } from "@monaco-editor/react";
 import { MetaDataType, NodeConstructor, ProblemType } from "@/lib/util";
@@ -23,17 +23,25 @@ const RightPart = ({
   const [selectedLang, setSelectedLang] = useState("java");
   const [showPointsModal, setShowPointsModal] = useState(false);
   const [activeTestCaseIndex, setActiveTestCaseIndex] = useState(0);
-  const [ans, setAns] = useState(problemDetail?.codeSnippets[1].code);
+  const [ans, setAns] = useState(problemDetail?.codeSnippets[0].code);
 
   const getLanguageId: { [key: string]: number } = {
     python: 70,
     java: 91,
   };
-  const qId = problemDetail?.questionId;
   let metaData: MetaDataType = JSON.parse(
     problemDetail!.metaData.replaceAll("\n", "")
   );
   let exampleTestcases = problemDetail?.exampleTestcases.split("\n");
+  let expectedTestcases = problemDetail?.expectedOutput;
+  if (selectedLang === "python") {
+    expectedTestcases = expectedTestcases.map((c: string | boolean) => {
+      if (c == "true" || c == "false") {
+        return c[0].toUpperCase() + c.substring(1);
+      }
+      return c;
+    });
+  }
 
   const addProgress = () => {
     try {
@@ -57,59 +65,6 @@ const RightPart = ({
       }
     } catch (error) {}
   };
-
-  function extractOutputs(str: string) {
-    const regex =
-      /<strong>Output:<\/strong>\s*(\[\[.*?\]\]|\[.*?\]|".*?"|'.*?'|-?\d+|\w+|<span class="example-io">.*?<\/span>)/g;
-    let matches;
-    const outputs = [];
-    while ((matches = regex.exec(str)) !== null) {
-      let outputStr = matches[1].trim();
-      outputStr = outputStr.replace(/&quot;/g, '"');
-      try {
-        if (
-          outputStr.startsWith('<span class="example-io">') &&
-          outputStr.endsWith("</span>")
-        ) {
-          outputStr = outputStr
-            .replace('<span class="example-io">', "")
-            .replace("</span>", "")
-            .trim();
-        }
-
-        if (outputStr.startsWith("[") && outputStr.endsWith("]")) {
-          outputs.push(JSON.parse(outputStr));
-        } else if (
-          outputStr === "true" ||
-          outputStr === "false" ||
-          !isNaN(parseInt(outputStr))
-        ) {
-          outputs.push(
-            outputStr === "true"
-              ? selectedLang === "java"
-                ? "true"
-                : "True"
-              : outputStr === "false"
-              ? selectedLang === "java"
-                ? "false"
-                : "False"
-              : parseFloat(outputStr)
-          );
-        } else {
-          outputs.push(outputStr.replaceAll('"', ""));
-        }
-      } catch (error) {
-        console.log("Error parsing JSON:", error);
-      }
-    }
-    return outputs;
-  }
-  const expectedTestcases = useMemo(() => {
-    if (problemDetail?.content) {
-      return extractOutputs(problemDetail.content.replaceAll("&quot;", '"'));
-    }
-    return [];
-  }, [problemDetail?.content, selectedLang]);
 
   const handleRun2 = async () => {
     setIsCompiling(true);
@@ -143,7 +98,7 @@ const RightPart = ({
       setIsCompiling(false);
     }
   };
-  
+
   const getToSend = async () => {
     let toSend = ans;
     let isJava = selectedLang === "java";
@@ -152,43 +107,41 @@ const RightPart = ({
     if (paramType === "ListNode") {
       toSend = `${NodeConstructor}${ans}`;
     }
-    
+
     if (isJava) {
       toSend = `\nimport java.util.Arrays;\n${ans}\nclass Main {
         public static void main(String[] args) {\n`;
-      }
-      let toFill = "";
-      let exampleTestcasesCounter = 0;
-      let expectedTestcasesCounter = 0;
-      while (exampleTestcasesCounter < exampleTestcases?.length!) {
-        expectedTestcases[expectedTestcasesCounter] =
+    }
+    let toFill = "";
+    let exampleTestcasesCounter = 0;
+    let expectedTestcasesCounter = 0;
+    while (exampleTestcasesCounter < exampleTestcases?.length!) {
+      expectedTestcases[expectedTestcasesCounter] =
         typeof expectedTestcases[expectedTestcasesCounter] !== "string"
-        ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
-        : expectedTestcases[expectedTestcasesCounter];
-        toFill = "";
+          ? JSON.stringify(expectedTestcases[expectedTestcasesCounter])
+          : expectedTestcases[expectedTestcasesCounter];
+      toFill = "";
       for (let i = 0; i < metaData.params.length; i++) {
         if (isJava) {
           const javaParams = metaData.params[i].type;
-          exampleTestcases = exampleTestcases?.map(eg => {
-            return eg.replace('[','').replace(']','')
-          })
+          exampleTestcases = exampleTestcases?.map((eg) => {
+            return eg.replace("[", "").replace("]", "");
+          });
           if (javaParams.includes("[][]")) {
             if (javaParams.includes("integer")) {
               toFill += `new int[][]{`;
             } else {
               toFill += `new ${javaParams}{`;
             }
-          }
-          else if( javaParams.includes("[]")) {
+          } else if (javaParams.includes("[]")) {
             if (javaParams.includes("integer")) {
               toFill += `new int[]{`;
             } else {
               toFill += `new ${javaParams}{`;
             }
-
           }
         }
-        
+
         toFill += metaData.params[i].type === "ListNode" ? "arrToNode(" : "";
         toFill += exampleTestcases![exampleTestcasesCounter++];
         toFill += metaData.params[i].type === "ListNode" ? ")" : "";
@@ -205,15 +158,11 @@ const RightPart = ({
             toSend?.slice(0, slicingIdx)! + toSend?.slice(slicingIdx! + 9)!;
         }
       } else {
-        if (isJava && returnType.includes('[]')) {
+        if (isJava && returnType.includes("[]")) {
           toSend += `System.out.println(Arrays.toString(new Solution().${metaData.name}(${toFill})));\n`;
-          
-        } 
-        else if (isJava ) {
+        } else if (isJava) {
           toSend += `System.out.println((new Solution().${metaData.name}(${toFill})));\n`;
-
-        }
-        else {
+        } else {
           toSend += `\nprint(Solution().${metaData.name}(${toFill}))`;
         }
       }
@@ -247,6 +196,7 @@ const RightPart = ({
     document.addEventListener("mouseup", handleMouseUp);
     document.addEventListener("mousemove", handleMouseMove);
   };
+
   return (
     <>
       {showPointsModal && <ConfettiModal />}
