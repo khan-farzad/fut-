@@ -59,3 +59,16 @@ pre {
 .water {
   animation: wave 12s infinite linear;
 }
+
+.grid1 {
+  animation: grid 5s linear infinite;
+}
+
+@keyframes grid {
+  0% {
+    transform: translateX(-10%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
