@@ -7,7 +7,7 @@ import FlashCard from "./_components/FlashCard";
 import React, { useMemo, useState } from "react";
 import MovingGrid from "./_components/MovingGrid";
 
-const page = () => {
+const Home = () => {
   const [showCard, setShowCard] = useState(false);
   const [activeQues, setActiveQues] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,6 +65,7 @@ const page = () => {
             {questions.map((ques, i) => (
               <Question
                 i={i}
+                key={i}
                 ques={ques}
                 setActiveQues={setActiveQues}
                 setShowCard={setShowCard}
@@ -83,4 +84,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Home;

@@ -69,9 +69,10 @@ const FlashCard = ({
             </div>
             {option?.map((opt, idx) => (
               <Option
-                answer={answer}
                 idx={idx}
                 opt={opt}
+                key={idx}
+                answer={answer}
                 selectedOption={isCorrect}
                 setSelectedOption={setIsCorrect}
               />
