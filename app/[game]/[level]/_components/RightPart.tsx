@@ -4,7 +4,13 @@ import EditorHeader from "./EditorHeader";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Editor } from "@monaco-editor/react";
-import { MetaDataType, NodeConstructor, ProblemType } from "@/lib/util";
+import {
+  MetaDataType,
+  NodeConstructor,
+  NodeConstructorJavaHead,
+  NodeConstructorJavaTail,
+  ProblemType,
+} from "@/lib/util";
 import ConfettiModal from "./_rightPartComponents/ConfettiModal";
 
 const RightPart = ({
@@ -139,11 +145,12 @@ const RightPart = ({
     let returnType = metaData.return.type;
     let paramType = metaData.params[0].type;
     if (paramType === "ListNode") {
-      toSend = `${NodeConstructor}${ans}`;
+      if (!isJava) toSend = `${NodeConstructor}${ans}`;
     }
-
     if (isJava) {
-      toSend = `\nimport java.util.Arrays;\n${ans}\nclass Main {
+      toSend = `import java.util.*;\n${
+        paramType === "ListNode" ? NodeConstructorJavaHead : ""
+      }${ans}\nclass Main {
         public static void main(String[] args) {\n`;
     }
     let toFill = "";
@@ -185,7 +192,10 @@ const RightPart = ({
         if (i !== metaData.params!.length - 1) toFill += ",";
       }
       if (paramType === "ListNode") {
-        toSend += `\nprint(nodeToArr(Solution().${metaData.name}(${toFill})))`;
+        if (isJava)
+          toSend += `\nSystem.out.println(nodeToArr(new Solution().${metaData.name}(${toFill})));\n`;
+        else
+          toSend += `\nprint(nodeToArr(Solution().${metaData.name}(${toFill})))`;
         if (returnType !== "ListNode") {
           let slicingIdx = toSend?.indexOf("nodeToArr(Solution().");
           toSend =
@@ -203,6 +213,7 @@ const RightPart = ({
       expectedTestcasesCounter++;
     }
     if (isJava) {
+      if (paramType === "ListNode") toSend += NodeConstructorJavaTail;
       toSend += `    }
 }`;
     }

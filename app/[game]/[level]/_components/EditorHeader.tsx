@@ -21,7 +21,7 @@ const EditorHeader = ({
   setAns: (newAns: string) => void;
   setSelectedLang: (newLang: string) => void;
 }) => {
-  const supportedLandSlugs = ['python']
+  const supportedLandSlugs = ['python','java']
   const supportedLanguages = languages?.filter(l => {
     return supportedLandSlugs.includes(l.langSlug)
   })
@@ -37,7 +37,7 @@ const EditorHeader = ({
           setAns(supportedLanguages![langIdx].code);
         }}
       >
-        {supportedLanguages!.map((l, i) => (
+        {supportedLanguages!.reverse().map((l, i) => (
             <option
               className="text-black"
               key={`${l.langSlug}-${i}`}

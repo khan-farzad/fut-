@@ -69,6 +69,37 @@ def arrToNode(arr):
         tmp = tmp.next
     return head\n`
 
+export const NodeConstructorJavaHead=`class ListNode {
+    int val;
+    ListNode next;
+    
+    ListNode(int val) {
+        this.val = val;
+        this.next = null;
+    }
+}\n`
+
+export const NodeConstructorJavaTail=`}\npublic static ListNode arrToNode(int... arr) {
+        if (arr.length == 0) return null;
+
+        ListNode head = new ListNode(arr[0]);
+        ListNode temp = head;
+        for (int i = 1; i < arr.length; i++) {
+            temp.next = new ListNode(arr[i]);
+            temp = temp.next;
+        }
+        return head;
+    }
+
+    // Convert Linked List to Array
+    public static List<Integer> nodeToArr(ListNode head) {
+        List<Integer> result = new ArrayList<>();
+        while (head != null) {
+            result.add(head.val);
+            head = head.next;
+        }
+        return result;`
+
 export const number_of_questions = {
   "noob-to-pro": 267,
   cap: 59,

@@ -12,6 +12,11 @@ const HEADERS = [
     "x-rapidapi-host": process.env.API_HOST,
     "Content-Type": "application/json",
   },
+  {
+    "x-rapidapi-key": process.env.API_KEY3,
+    "x-rapidapi-host": process.env.API_HOST,
+    "Content-Type": "application/json",
+  },
 ];
 
 export async function POST(request: NextRequest) {
