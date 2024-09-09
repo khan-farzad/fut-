@@ -21,7 +21,7 @@ const EditorHeader = ({
   setAns: (newAns: string) => void;
   setSelectedLang: (newLang: string) => void;
 }) => {
-  const supportedLandSlugs = ['python','java']
+  const supportedLandSlugs = ['python']
   const supportedLanguages = languages?.filter(l => {
     return supportedLandSlugs.includes(l.langSlug)
   })

@@ -20,10 +20,10 @@ const RightPart = ({
   const [isCompiling, setIsCompiling] = useState(false);
   const [expected, setExpected] = useState<string[]>([]);
   const [solutionHeight, setSolutionHeight] = useState(50);
-  const [selectedLang, setSelectedLang] = useState("java");
+  const [selectedLang, setSelectedLang] = useState("python");
   const [showPointsModal, setShowPointsModal] = useState(false);
   const [activeTestCaseIndex, setActiveTestCaseIndex] = useState(0);
-  const [ans, setAns] = useState(problemDetail?.codeSnippets[0].code);
+  const [ans, setAns] = useState(problemDetail?.codeSnippets[1].code);
 
   const getLanguageId: { [key: string]: number } = {
     python: 70,
