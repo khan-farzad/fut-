@@ -250,6 +250,8 @@ const RightPart = ({
         className="flex flex-col bg-[#1E1E1E] text-primary relative grow"
       >
         <EditorHeader
+          ans={ans}
+          quesLang={ques.level}
           setAns={setAns}
           handleRun={handleRun2}
           isCompiling={isCompiling}
